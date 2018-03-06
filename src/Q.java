@@ -1,8 +1,19 @@
 import java.util.*;
 
 public class Q {
-    ArrayList<Pair> qMatrix; //saves the boards configs and their values
-    LinkedList<String> thisGame; //saves the configs of the current games
+
+    public class Pair {
+        String board;
+        double value;
+
+        Pair(String board,double value){
+            this.board=board;
+            this.value=value;
+        }
+    }
+
+    ArrayList<Pair> qMatrix; //saves the board configs and their values
+    LinkedList<String> thisGame; //saves the configs of the current game
 
     Q(){
         qMatrix = new ArrayList<>();
@@ -19,7 +30,7 @@ public class Q {
         }
     }
 
-    public void printThisGame(){ //to see the game
+    public void printThisGame(){ //to see the current game
         for (String s : thisGame) {
             System.out.println("String -> "+s);
         }
@@ -34,11 +45,10 @@ public class Q {
     }
 
 
-    public void gameEnded(double reward){//+1 if won, -1 if lost, 0 if draw
+    public void gameEnded(double reward){//+2 if won, -1 if lost, 1 if draw
         String board;
         int first=0,pos;
         double prevValue =0;
-        //thisGame.pollLast();
         while(!thisGame.isEmpty()) { //analise the last game
             if ((pos=containsBoard(board = thisGame.pollLast()))!=-1) {//if this config has been seen before
                 if(first==0) {
@@ -60,8 +70,6 @@ public class Q {
                     qMatrix.add(new Pair(board,0.9*(prevValue)));
                     prevValue=0.9*prevValue;
                 }
-                if(pos!=-1)
-                    System.out.println("String -> "+board+" Value -> "+qMatrix.get(pos).value);
             }
         }
     }
