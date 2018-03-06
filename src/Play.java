@@ -1,4 +1,4 @@
-import java.io.IOError;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Play   {
@@ -7,52 +7,68 @@ public class Play   {
         Q q = new Q();
         Scanner input = new Scanner(System.in);
         Boolean firstTurn=true;
-        char winner;
         int games = 0;
+        System.out.println("How many games to train?");
+        int max_train;
+        while(true){
+            try {
+                max_train=input.nextInt();
+                break;
+            } catch (InputMismatchException e){
+                System.out.println("That's not a valid number");
+            }
+        }
+
         while(true) {
-            if (firstTurn) {                    //prints the board in the first turn a game
-                board.printBoard();
+            if (firstTurn) { //prints the board in the first turn a game
+                if(games>=max_train)
+                    board.printBoard();
                 firstTurn = false;
             }
-
-            if (games < 1000) { //just to train a bit
+            if (games < max_train) { //just to train a bit
                 board.play(board.playRandom(), 'X');
                 //System.out.println("plays -> "+ plays);
             } else {
                 //System.out.println("whats your play?");
-                while (true){
-                    int humanPlay = input.nextInt();
-                    if (board.emptyPosition(humanPlay)) {
-                        board.play(humanPlay, 'X');
-                        break;
-                    } //else
-                        //System.out.println("Invalid play.");
+                while (true) {
+                    try {
+                        int humanPlay = input.nextInt();
+                        if (board.emptyPosition(humanPlay)) {
+                            board.play(humanPlay, 'X');
+                            break;
+                        }
                     }
+                    catch (InputMismatchException e) {
+                        System.out.println("Invalid play.");
+                    }
+                }
             }
             q.savePlay(String.valueOf(board.board));
-            board.printBoard();
+            if(games>max_train)
+                board.printBoard();
             //
             //if human player ended game
             if(board.isFull() || board.whoWon()!='n'){
                 //q.printThisGame();
                 if(board.whoWon()!='n') {
-                    System.out.println("X won the game.\n");
+                    if(games>=max_train)
+                        System.out.println("X won the game.\n");
                     q.gameEnded(-1);
                 }
                 else {
-                    System.out.println("It's a draw.\n");
+                    if(games>=max_train)
+                        System.out.println("It's a draw.\n");
                     q.gameEnded(1);
                 }
                 board = new Board();
                 firstTurn=true;
-                q.printQ();
+                //q.printQ();
                 games++;
-                System.out.println("games ->"+games);
+                //System.out.println("games ->"+games);
             }
             //end of if the human player ended game
             //
-
-            else{
+            else{ //if human didnt end the game
                 if(q.hasState(String.valueOf(board.board))){
                     int AIPlay = q.checkNext(board.board);
                     //System.out.println("AI play = " +AIPlay);
@@ -65,24 +81,27 @@ public class Play   {
                     board.play(board.playRandom(),'O');
                 }
                 q.savePlay(String.valueOf(board.board));
-                board.printBoard();
+                if(games>=max_train)
+                    board.printBoard();
                 //
                 //if AI ended game
                 if(board.isFull() || board.whoWon()!='n'){
                     //q.printThisGame();
                     if(board.whoWon()!='n') {
-                        System.out.println("O won the game.\n");
-                        q.gameEnded(1);
+                        if(games>=max_train)
+                            System.out.println("O won the game.\n");
+                        q.gameEnded(2);
                     }
                     else {
-                        System.out.println("It's a draw.\n");
+                        if(games>=max_train)
+                            System.out.println("It's a draw.\n");
                         q.gameEnded(1);
                     }
                     board = new Board();
                     firstTurn=true;
-                    q.printQ();
+                    //q.printQ();
                     games++;
-                    System.out.println("games ->"+games);
+                    //System.out.println("games ->"+games);
                 }
                 //end of if AI ended game
                 //

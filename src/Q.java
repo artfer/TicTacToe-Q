@@ -1,31 +1,31 @@
 import java.util.*;
 
 public class Q {
-    LinkedList<Pair> qMatrix;
-    LinkedList<String> thisGame;
+    ArrayList<Pair> qMatrix; //saves the boards configs and their values
+    LinkedList<String> thisGame; //saves the configs of the current games
 
     Q(){
-        qMatrix = new LinkedList<>();
+        qMatrix = new ArrayList<>();
         thisGame = new LinkedList<>();
     }
 
-    public void savePlay(String board){
+    public void savePlay(String board){ //saves a board
         thisGame.add(board);
     }
 
-    public void printQ(){
+    public void printQ(){ //to see the current matrix
         for (Pair p : qMatrix) {
             System.out.println("String -> "+p.board.substring(0,3)+"|"+p.board.substring(3,6)+"|"+p.board.substring(6,9)+ "  Value -> "+p.value);
         }
     }
 
-    public void printThisGame(){
+    public void printThisGame(){ //to see the game
         for (String s : thisGame) {
             System.out.println("String -> "+s);
         }
     }
 
-    public int containsBoard(String board){
+    public int containsBoard(String board){ //checks if the config already exists in the Q Matrix
         for(int i=0;i<qMatrix.size();i++){
             if(qMatrix.get(i).board.compareTo(board)==0)
                 return i;
@@ -67,16 +67,14 @@ public class Q {
     }
 
     public boolean hasState(String board){//check if the Q Matrix has this config
-        if(qMatrix.isEmpty())
-            return false;
-        return containsBoard(board)!=-1;
+        return !qMatrix.isEmpty() && containsBoard(board)!=-1;
     }
 
     public int checkNext(char[] board){//choosing what to play
         char[] tmp;
         int bestPos=-1;
         double value=Double.MIN_VALUE,best=Double.MIN_VALUE;
-        for(int i=0;i<9;i++){
+        for(int i=0;i<board.length;i++){
             if(board[i] ==' '){
                 tmp = board.clone();
                 tmp[i]='O';
